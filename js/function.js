@@ -14,6 +14,10 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
   var risk = risk_rng;
   var TrStop_flag = 0;
   var TrStop_Price = 0;
+  var buy_trade = 0;
+  var buy_win = 0;
+  var sell_trade = 0;
+  var sell_win = 0;
 
   //グラフに表示するために設定
   var buyArr = [[], []];
@@ -29,8 +33,10 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
         PL_tan += (Sell_Price - yArr[i]) / Math.abs(Sell_Price); //売り玉の損益確定
         PL_fuku *= Sell_Price / yArr[i];
         trade += 1; //決済時にトレードカウント
+        sell_trade += 1;
         if (Sell_Price - yArr[i] > 0) {
           win += 1;
+          sell_win += 1;
           profit += Sell_Price - yArr[i];
         } else {
           lose += 1;
@@ -50,8 +56,10 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
         PL_tan += (yArr[i] - Buy_Price) / Math.abs(Buy_Price); //買い玉の損益確定
         PL_fuku *= yArr[i] / Buy_Price;
         trade += 1;
+        buy_trade += 1;
         if (yArr[i] - Buy_Price > 0) {
           win += 1;
+          buy_win += 1;
           profit += yArr[i] - Buy_Price;
         } else {
           lose += 1;
@@ -73,6 +81,7 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
             PL_tan += (yArr[i] - Buy_Price) / Math.abs(Buy_Price); //買い玉の損益確定
             PL_fuku *= yArr[i] / Buy_Price;
             trade += 1;
+            buy_trade += 1;
             posiflg = 0;
             slArr[0].push(xArr[i]); //損切のタイミングを配列に記録
             slArr[1].push(yArr[i]);
@@ -86,10 +95,12 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
             PL_tan += (yArr[i] - Buy_Price) / Math.abs(Buy_Price); //買い玉の損益確定
             PL_fuku *= yArr[i] / Buy_Price;
             trade += 1;
+            buy_trade += 1;
             posiflg = 0;
             tpArr[0].push(xArr[i]); //利確のタイミングを配列に記録
             tpArr[1].push(yArr[i]);
             win += 1;
+            buy_win += 1;
             profit += yArr[i] - Buy_Price;
           }
         }
@@ -100,12 +111,14 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
             PL_tan += (yArr[i] - Buy_Price) / Math.abs(Buy_Price); //買い玉の損益確定
             PL_fuku *= yArr[i] / Buy_Price;
             trade += 1;
+            buy_trade += 1;
             posiflg = 0;
             //基本は利確だが急落時に損切になる可能性もある（終値使用のため）
             if (yArr[i] - Buy_Price > 0) {
               tpArr[0].push(xArr[i]); //利確のタイミングを配列に記録
               tpArr[1].push(yArr[i]);
               win += 1;
+              buy_win += 1;
               profit += yArr[i] - Buy_Price;
             } else {
               slArr[0].push(xArr[i]); //損切のタイミングを配列に記録
@@ -136,6 +149,7 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
             PL_tan += (Sell_Price - yArr[i]) / Math.abs(Sell_Price); //売り玉の損益確定
             PL_fuku *= Sell_Price / yArr[i];
             trade += 1;
+            sell_trade += 1;
             posiflg = 0;
             slArr[0].push(xArr[i]); //損切のタイミングを配列に記録
             slArr[1].push(yArr[i]);
@@ -149,10 +163,12 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
             PL_tan += (Sell_Price - yArr[i]) / Math.abs(Sell_Price); //売り玉の損益確定
             PL_fuku *= Sell_Price / yArr[i];
             trade += 1;
+            sell_trade += 1;
             posiflg = 0;
             tpArr[0].push(xArr[i]); //利確のタイミングを配列に記録
             tpArr[1].push(yArr[i]);
             win += 1;
+            sell_win += 1;
             profit += Sell_Price - yArr[i];
           }
         }
@@ -163,12 +179,14 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
             PL_tan += (Sell_Price - yArr[i]) / Math.abs(Sell_Price); //売り玉の損益確定
             PL_fuku *= Sell_Price / yArr[i];
             trade += 1;
+            sell_trade += 1;
             posiflg = 0;
             //基本は利確だが急騰時に損切になる可能性もある（終値使用のため）
             if (Sell_Price - yArr[i] > 0) {
               tpArr[0].push(xArr[i]); //利確のタイミングを配列に記録
               tpArr[1].push(yArr[i]);
               win += 1;
+              sell_win += 1;
               profit += Sell_Price - yArr[i];
             } else {
               slArr[0].push(xArr[i]); //損切のタイミングを配列に記録
@@ -205,6 +223,8 @@ var PL = function (xArr, yArr, p1, p2, risk_rng, reward, dma, TrStop) {
     tpArr,
     (win / trade) * 100, //勝率
     profit / win / (loss / lose), //リスクリワード比（平均利幅と平均損失幅の比）
+    (buy_win / buy_trade) * 100,
+    (sell_win / sell_trade) * 100,
   ];
 };
 
@@ -222,9 +242,13 @@ async function plot_PL(xArr, yArr) {
   var PL_fuku = PL(xArr, yArr, p1, p2, risk, reward, dma, TrStop)[3].toFixed(2);
   var winrate = PL(xArr, yArr, p1, p2, risk, reward, dma, TrStop)[9].toFixed(2);
   var RR = PL(xArr, yArr, p1, p2, risk, reward, dma, TrStop)[10].toFixed(2);
+  var Buy_WR = PL(xArr, yArr, p1, p2, risk, reward, dma, TrStop)[11].toFixed(2);
+  var Sell_WR = PL(xArr, yArr, p1, p2, risk, reward, dma, TrStop)[12].toFixed(
+    2
+  );
 
   $("#pl").html(`（バックテスト結果）<br><li>トレード回数：${TR}回</li>
-  <li>勝率：${winrate}%　平均RR：${RR}
+  <li>勝率：${winrate}%　平均RR：${RR}<br> （Buy：${Buy_WR}%、Sell：${Sell_WR}%）
   </li>
   <li>総損益率
     <table>
@@ -307,7 +331,8 @@ async function getGraph_S(xArr, yArr) {
   var n2 = `EMA(${p1})`;
   var n3 = `EMA(${p2})`;
 
-  //期間選択の値を入力
+  //テーブル名、期間選択の値を入力
+  $("#table_name").val(`${n1}`);
   $(".time1").val(`${xArr[0].slice(0, 10)}T${xArr[0].slice(11)}`);
   $(".time2").val(
     `${xArr[xArr.length - 1].slice(0, 10)}T${xArr[xArr.length - 1].slice(11)}`
