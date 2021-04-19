@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+    <style>
+    div {margin: 20px 0 0 20px;}
+    #risk,#reward {width: 40px;}
+    button,#radio {margin: 10px auto;}
+    #CrPrice ,#sl ,#tp{width: 80px;}
+    </style>
+    <title>価格計算</title>
+  </head>
+  <body>
+    <div>
+    現在価格 <input id="CrPrice" type="number" value="1.1965" step="0.001" min="0"></input>
+    損切 <input id="risk" type="number" value="0.2" step="0.1" min="0"></input>%
+    利確 <input id="reward" type="number" value="0.6" step="0.1" min="0"></input>%<br>
+    <div id=radio>
+    <input type="radio" name="trade" value="buy" checked="checked">買い
+    <input type="radio" name="trade" value="sell">売り<br>
+    <button id="calcPrice">価格計算</button><br>
+    </div>
+    損切水準 <input id="sl"></input>
+    利確水準 <input id="tp"></input>
+    </div>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script>
+    $("#calcPrice").on("click", function () {
+        let price = parseFloat($("#CrPrice").val())
+        let risk = $("#risk").val()/100
+        let reward = $("#reward").val()/100
+        let trade = $('input[name=trade]:checked').val()
+        let slPrice,tpPrice
+        let array = $("#CrPrice").val().split('.');
+        let keta = array[1].length;
+        if(trade=="buy"){
+            slPrice=price*(1-risk)
+            tpPrice=price*(1+reward)
+        }
+        else{
+            slPrice=price*(1+risk)
+            tpPrice=price*(1-reward)
+        }
+        $("#sl").val(slPrice.toFixed(keta))
+        $("#tp").val(tpPrice.toFixed(keta))       
+    });
+  </script>
+</html>
