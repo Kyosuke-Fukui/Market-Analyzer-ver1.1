@@ -15,13 +15,7 @@
           <legend>CSVファイルアップロード</legend>
             <input type="file" name="upfile" accept=".csv"/><br>
             <label>テーブル名：
-              <select name="table_name">
-                <option value="EURUSD15M">EURUSD15M</option>
-                <option value="USDJPY">USDJPY</option>
-                <option value="EURUSD">EURUSD</option>
-                <option value="GBPUSD">GBPUSD</option>
-                <option value="BTCUSD">BTCUSD</option>
-              </select>
+            <?php include('./table.php'); ?>
             </label>
             <input type="submit" value="アップロード" />
         </fieldset>
@@ -30,13 +24,7 @@
         <fieldset>
           <legend>データ選択</legend>
           <label>テーブル名：
-            <select name="table_name">
-              <option value="EURUSD15M">EURUSD15M</option>
-              <option value="USDJPY">USDJPY</option>
-              <option value="EURUSD">EURUSD</option>
-              <option value="GBPUSD">GBPUSD</option>
-              <option value="BTCUSD">BTCUSD</option>
-            </select>
+          <?php include('./table.php'); ?>
           </label>
           <div>
           <label>start：<input class="time" type="datetime-local" name="start_time" value="2020-01-01T07:00:00"></label><br>

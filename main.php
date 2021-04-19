@@ -17,13 +17,7 @@
             <legend>データ選択</legend>
             <form method="post" action="select.php">
               <label>テーブル名：
-                <select name="table_name" id="table_name">
-                  <option value="EURUSD15M">EURUSD15M</option>
-                  <option value="USDJPY">USDJPY</option>
-                  <option value="EURUSD">EURUSD</option>
-                  <option value="GBPUSD">GBPUSD</option>
-                  <option value="BTCUSD">BTCUSD</option>
-                </select>
+              <?php include('./table.php'); ?>
               </label><br>
               <label>start：<input class="time1" type="datetime-local" name="start_time" value="2020-01-01T07:00:00"></label><br>
               <label>end：<input class="time2" type="datetime-local" name="end_time" value="2022-01-01T06:00:00"></label>
